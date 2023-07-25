@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+
+# $1 com.example
+# $2 hello-world
+
+### prepare name variations
+
+join() {
+    # $1 is return variable name
+    # $2 is sep
+    # $3... are the elements to join
+    local retname=$1 sep=$2 ret=$3
+    shift 3 || shift $(($#))
+    printf -v "$retname" "%s" "$ret${@/#/$sep}"
+}
+
+unameOut=$(uname -s)
+  case ${unameOut} in
+   Linux*)
+      start="xdg-open"
+      ;;
+   Darwin*)
+      start="open"
+      ;;
+  esac
+
+IFS='-' lowerTokens=( $2 )
+IFS=' '
+upperTokens=( "${lowerTokens[@]^}" )
+allUpperTokens=( "${lowerTokens[@]^^}" )
+
+join "kebabLower" "-" "${lowerTokens[@]}"
+join "kebabUpper" "-" "${upperTokens[@]}"
+join "lower" "" "${lowerTokens[@]}"
+join "camelTail" "" "${upperTokens[@]:1}"
+camel=${lowerTokens[0]}$camelTail
+join "pascal" "" "${upperTokens[@]}"
+join "snakeAllUpper" "_" "${allUpperTokens[@]}"
+
+### clear existing files
+
+workdir=$(pwd)
+
+docker rm -f $2
+docker rmi $2
+rm -rf $2
+
+### init the clone
+
+cp -R clone-me $2
+cd $2
+rm -rf .git
+rm clone
+rm README.md
+mv APP_README.md README.md
+
+### move files to new directories 
+
+packageDirectory=$(echo $1 | sed "s/\./\//g")
+
+cd $workdir/$2/src/main/java
+mkdir -p $packageDirectory
+cp -R orgpackage/* $packageDirectory
+rm -rf orgpackage
+
+cd $workdir/$2/src/test/java
+mkdir -p $packageDirectory
+cp -R orgpackage/* $packageDirectory
+rm -rf orgpackage
+
+### rename files
+
+cd $workdir/$2
+find . -name "*" | xargs rename s/clone-me/$kebabLower/
+find . -name "*" | xargs rename s/Clone-Me/$kebabUpper/
+find . -name "*" | xargs rename s/cloneme/$lower/
+find . -name "*" | xargs rename s/CloneMe/$pascal/
+find . -name "*" | xargs rename s/cloneMe/$camel/
+find . -name "*" | xargs rename s/CLONE_ME/$snakeAllUpper/
+
+### replace packages in code
+
+find . -type f -exec sed -i'' -e "s/orgpackage/$1/g" {} +
+
+### replace names in code
+
+find . -type f -exec sed -i'' -e "s/clone-me/$kebabLower/g" {} +
+find . -type f -exec sed -i'' -e "s/Clone-Me/$kebabUpper/g" {} +
+find . -type f -exec sed -i'' -e "s/cloneme/$lower/g" {} +
+find . -type f -exec sed -i'' -e "s/CloneMe/$pascal/g" {} +
+find . -type f -exec sed -i'' -e "s/cloneMe/$camel/g" {} +
+find . -type f -exec sed -i'' -e "s/CLONE_ME/$snakeAllUpper/g" {} +
+
+### git init
+
+cd $workdir/$2
+git init
+
+### next steps
+
+echo "View $workdir/$2/README.md for next steps"
+${start} $workdir/$2/README.md
