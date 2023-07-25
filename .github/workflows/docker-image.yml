@@ -43,7 +43,7 @@ jobs:
 
       - name: Run API test
         run: |
-          response_code=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:8080/clone-me)
+          response_code=$(curl -o /dev/null -s -w "%{http_code}" http://0.0.0.0:8080/clone-me)
 
           if [ "$response_code" -eq 200 ]; then
             echo "API test passed. Received a 200 response."
