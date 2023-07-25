@@ -39,4 +39,4 @@ jobs:
 
       - name: Check container status
         run: |
-          docker container logs clone-me -f
+          docker container logs clone-me
