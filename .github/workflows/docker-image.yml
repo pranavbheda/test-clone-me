@@ -23,7 +23,7 @@ jobs:
 
       - name: Build and run containers
         run: |
-          docker-compose up -d --build
+          docker build -t clone-me .
 
       - name: Wait for containers to start
         run: sleep 10
