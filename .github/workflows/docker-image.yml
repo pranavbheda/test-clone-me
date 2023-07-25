@@ -31,7 +31,7 @@ jobs:
             -d \
             --name clone-me \
             -p 8080:8080 \
-            -e JAVA_OPTS="-Ddatarouter.server.name2=localhost -Ddatarouter.server.type=dev -Ddatarouter.internalConfigDirectory=dev-docker -Ddatarouter.server.privateIp=127.0.0.1 -Ddatarouter.server.publicIp=127.0.0.1 -Ddatarouter.administrator.email=$email -Ddatarouter.environment=clone-me -Ddatarouter.environmentType=development" \
+            -e JAVA_OPTS="-Ddatarouter.server.name=localhost -Ddatarouter.server.type=dev -Ddatarouter.internalConfigDirectory=dev-docker -Ddatarouter.server.privateIp=127.0.0.1 -Ddatarouter.server.publicIp=127.0.0.1 -Ddatarouter.administrator.email=$email -Ddatarouter.environment=clone-me -Ddatarouter.environmentType=development" \
             clone-me
 
       - name: Wait for containers to start
@@ -39,5 +39,4 @@ jobs:
 
       - name: Check container status
         run: |
-          docker ps
-
+          docker container logs clone-me -f
