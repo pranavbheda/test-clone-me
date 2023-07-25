@@ -9,7 +9,7 @@ docker stop clone-me && docker rm clone-me
 
 docker build -t clone-me .
 
-email=<YOUR_EMAIL>
+email=test@hotpads.com
 
 docker run \
     -d \

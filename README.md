@@ -1,4 +1,5 @@
 ![example workflow](https://github.com/pranavbheda/test-clone-me/actions/workflows/maven.yml/badge.svg)
+
 ## clone-me
 
 A template to be cloned into an application.
