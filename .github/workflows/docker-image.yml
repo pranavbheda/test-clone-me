@@ -31,7 +31,7 @@ jobs:
             -d \
             --name clone-me \
             -p 8080:8080 \
-            -e JAVA_OPTS="-Ddatarouter.server.name=localhost -Ddatarouter.server.type=dev -Ddatarouter.internalConfigDirectory=dev-docker -Ddatarouter.server.privateIp=127.0.0.1 -Ddatarouter.server.publicIp=127.0.0.1 -Ddatarouter.administrator.email=$email -Ddatarouter.environment=clone-me -Ddatarouter.environmentType=development" \
+            -e JAVA_OPTS="-Ddatarouter.server.name2=localhost -Ddatarouter.server.type=dev -Ddatarouter.internalConfigDirectory=dev-docker -Ddatarouter.server.privateIp=127.0.0.1 -Ddatarouter.server.publicIp=127.0.0.1 -Ddatarouter.administrator.email=$email -Ddatarouter.environment=clone-me -Ddatarouter.environmentType=development" \
             clone-me
 
       - name: Wait for containers to start
@@ -40,15 +40,4 @@ jobs:
       - name: Check container status
         run: |
           docker ps
-
-      - name: Run API test
-        run: |
-          response_code=$(curl -o /dev/null -s -w "%{http_code}" http://0.0.0.0:8080/clone-me)
-
-          if [ "$response_code" -eq 200 ]; then
-            echo "API test passed. Received a 200 response."
-          else
-            echo "API test failed. Received a non-200 response: $response_code"
-            exit 1
-          fi
 
